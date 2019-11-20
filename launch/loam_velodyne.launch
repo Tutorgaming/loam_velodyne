@@ -2,12 +2,17 @@
 
   <arg name="rviz" default="true" />
   <arg name="scanPeriod" default="0.1" />
+  <param name="use_sim_time" value="True"/>
+  <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 0 0 0 /map /camera_init 10" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="38.0 23.0 0 1.35 0 0 /map /camera_init 10" />  -->
+  <node pkg="tf" type="static_transform_publisher" name="aftbase_link_to_camera" args="0 0 0 0 0 0 /aft_mapped /base_footprint 10" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera" args="0 0 0 0 0 0 /base_footprint /camera 10" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="gpsworldtomap" args="0 0 0 1.57 0 0 /world /map 10" /> -->
 
   <node pkg="loam_velodyne" type="multiScanRegistration" name="multiScanRegistration" output="screen">
     <param name="lidar" value="VLP-16" /> <!-- options: VLP-16  HDL-32  HDL-64E -->
     <param name="scanPeriod" value="$(arg scanPeriod)" />
-
-    <remap from="/multi_scan_points" to="/velodyne_points" />
+    <remap from="/multi_scan_points" to="/lslidar_point_cloud" />
   </node>
 
   <node pkg="loam_velodyne" type="laserOdometry" name="laserOdometry" output="screen" respawn="true">
@@ -16,9 +21,6 @@
 
   <node pkg="loam_velodyne" type="laserMapping" name="laserMapping" output="screen">
     <param name="scanPeriod" value="$(arg scanPeriod)" />
-  </node>
-
-  <node pkg="loam_velodyne" type="transformMaintenance" name="transformMaintenance" output="screen">
   </node>
 
   <group if="$(arg rviz)">
